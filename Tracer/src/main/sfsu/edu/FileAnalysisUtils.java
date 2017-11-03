@@ -10,17 +10,20 @@ import org.apache.bcel.classfile.JavaClass;
 
 public class FileAnalysisUtils {
 
-	static AnalyzedFile rateSingleFile(File file, CallDepthAnalysis cdAnalysis, ObfuscationType obfuscationType) {
+	//	static AnalyzedFile rateSingleFile(File file, CallDepthAnalysis cdAnalysis, ObfuscationType obfuscationType) {
+	static AnalyzedFile rateSingleFile(File file, ObfuscationType obfuscationType) {
 		@SuppressWarnings("unused")
-		int methodCount = 0, fieldCount = 0, bytesCounter = 0, Alen = 0,cpoolCount=0;
+		int methodCount = 0, fieldCount = 0, attributeCount = 0, bytesCounter = 0, Alen = 0,cpoolCount=0;
 		AnalyzedFile af = new AnalyzedFile();
 		try {
 			// get the name of the class we're analyzing
 			String srcFileName = file.getAbsolutePath();
 			srcFileName = srcFileName.replace(".java", ".class");
+
 			/* Parse the class */
 			ClassParser parser = new ClassParser(srcFileName);
 			JavaClass javaClass = parser.parse();
+			attributeCount = javaClass.getAttributes().length;
 			fieldCount = javaClass.getFields().length;
 			bytesCounter = javaClass.getBytes().length;
 			methodCount = javaClass.getMethods().length;
@@ -29,9 +32,8 @@ public class FileAnalysisUtils {
 			af.setFileSize(bytesCounter);
 			af.setNumMethods(methodCount);
 			af.setNumFields(fieldCount);
+			af.setNumAttributes(attributeCount);
 			af.setCpoolSize(cpoolCount);
-			af.setCallDepth(cdAnalysis.getCallDepth());
-			af.setCallFlow(cdAnalysis.getCallFlow());
 			af.setFileName(file.getName());
 			af.setObfuscationType(obfuscationType);
 			af.setPathToFile(file.getAbsolutePath());

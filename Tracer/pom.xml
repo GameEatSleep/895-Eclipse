@@ -81,6 +81,11 @@
 			<artifactId>jshrink</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<artifactId>jbox2d-testbed-pro</artifactId>
+			<groupId>org.jbox2d</groupId>
+			<version>proguard</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -99,9 +104,9 @@
 			</activation>
 			<dependencies>
 				<dependency>
-					<groupId>main</groupId>
+					<groupId>main.sfsu.edu</groupId>
 					<artifactId>tools</artifactId>
-					<version>1</version>
+					<version>0.0.1</version>
 				</dependency>
 			</dependencies>
 		</profile>

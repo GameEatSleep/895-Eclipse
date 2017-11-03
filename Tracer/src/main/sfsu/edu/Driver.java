@@ -11,7 +11,7 @@ public class Driver {
 	 * @throws URISyntaxException
 	 */
 	public static void main(String[] args) throws URISyntaxException {
-		initConfiguration();
+		//initConfiguration();
 
 		try {
 			String input = System.getProperty("user.dir")+File.separator+".."+File.separator+ "testFiles"+File.separator+ "src";
@@ -43,8 +43,10 @@ public class Driver {
 	 * AspectJ loadtime-weaving components.
 	 * @throws URISyntaxException
 	 */
+	@SuppressWarnings("unused")
+	@Deprecated
 	private static void initConfiguration() throws URISyntaxException {
-		AspectJUtils.isAspectJAgentLoaded();
+		//AspectJUtils.isAspectJAgentLoaded();
 	}
 
 	/**

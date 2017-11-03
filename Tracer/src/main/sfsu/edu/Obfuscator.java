@@ -64,8 +64,11 @@ public class Obfuscator {
 	 * Performs an obfuscation using the Proguard library
 	 * @param classFile
 	 * @return the path to the now-obfuscated file.
-	 * @throws IOException 
+	 * @throws IOException
+	 * Since the final decision for this project was to verify the Jbox2D library, we will leave this out for the moment.
+	 * However, it does permit users to perform dynamic weaving so I will not remove it altogether 
 	 */
+	@Deprecated
 	static File obfuscateClassFileUsingProguard(File classFile) throws IOException {
 		String unobfuscatedFileName = FileUtils.getFileNameWithoutExtension(classFile);
 		String originalFileName = FileUtils.getFileNameWithoutExtension(classFile);
@@ -101,7 +104,7 @@ public class Obfuscator {
 		String pathToJar = pathToFiles+obfuscatedFileName;
 		try {
 			ProcessBuilder builderExecute = new ProcessBuilder(paramsExecute);
-			//builderExecute.inheritIO();
+			builderExecute.inheritIO();
 
 			Process process = builderExecute.start();
 			process.waitFor();
@@ -117,6 +120,16 @@ public class Obfuscator {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		return new File(finalObfuscatedFileName);
+	}
+
+	static File obfuscateProjectUsingProguard(File classFile) throws IOException {
+		String unobfuscatedFileName = FileUtils.getFileNameWithoutExtension(classFile);
+		String pathToFiles = classFile.getCanonicalPath().substring(0, classFile.getCanonicalPath().lastIndexOf(File.separator)) +File.separator; //need to get the parent path
+		String finalObfuscatedFileName = pathToFiles+unobfuscatedFileName + ".class";
+		unobfuscatedFileName = unobfuscatedFileName+".class";
+		String pathToJar= System.getProperty("user.dir")+File.separator+"target"+File.separator+"alternateLocation"+File.separator+"jbox2d-testbed-pro-proguard.jar";
+		FileUtils.extractFromJar(pathToJar, unobfuscatedFileName, finalObfuscatedFileName);
 		return new File(finalObfuscatedFileName);
 	}
 

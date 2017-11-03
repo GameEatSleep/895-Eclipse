@@ -65,6 +65,8 @@ public class AspectJUtils {
 			vm.loadAgent(jarFilePath);
 			vm.detach();
 		} catch (Exception e) {
+			System.out.println("Failed to dynamically load weaving agent" + e);
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -103,6 +105,8 @@ public class AspectJUtils {
 		paramsExecute.add("-javaagent:" + aspectWeaverPath);
 		paramsExecute.add(klass.getName());
 		ProcessBuilder builderExecute = new ProcessBuilder(paramsExecute);
+		builderExecute.inheritIO();
+
 		Process process = builderExecute.start();
 
 		// get output from the process
@@ -123,7 +127,7 @@ public class AspectJUtils {
 				} else {
 					callFlow = "";
 				}
-				
+
 			}
 		}
 		if (!found) {
@@ -157,7 +161,7 @@ public class AspectJUtils {
 		try {
 			fis = new FileInputStream(f1);
 			/* Parse the class */
-			ClassParser parser = new ClassParser(fis, "test.class");
+			ClassParser parser = new ClassParser(fis, "arbitrary");
 			JavaClass javaClass = parser.parse();
 			packageName = javaClass.getPackageName();
 		} catch (Exception e) {

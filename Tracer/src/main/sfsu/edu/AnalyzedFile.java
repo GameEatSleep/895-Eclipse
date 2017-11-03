@@ -15,12 +15,13 @@ public class AnalyzedFile {
 	private double fileSize;
 	private int numFields;
 	private int cpoolSize;
+	private int numAttributes;
 	private int callDepth;
 	private String callFlow;
 
-	
+
 	public AnalyzedFile(String fileName, String pathToFile, ObfuscationType obfuscationType, int numMethods, double fileSize,
-			int numFields, int cpoolSize, int callDepth, String callFlow) {
+			int numFields, int cpoolSize, int numAttributes, int callDepth, String callFlow) {
 		super();
 		this.fileName = fileName;
 		this.pathToFile = pathToFile;
@@ -29,6 +30,7 @@ public class AnalyzedFile {
 		this.fileSize = fileSize;
 		this.numFields = numFields;
 		this.cpoolSize = cpoolSize;
+		this.numAttributes = numAttributes;
 		this.callDepth = callDepth;
 		this.callFlow = callFlow;
 	}
@@ -77,6 +79,12 @@ public class AnalyzedFile {
 	}
 	public void setCpoolSize(int cpoolSize) {
 		this.cpoolSize = cpoolSize;
+	}
+	public int getNumAttributes() {
+		return numAttributes;
+	}
+	public void setNumAttributes(int numAttributes) {
+		this.numAttributes = numAttributes;
 	}
 	public int getCallDepth() {
 		return callDepth;

@@ -107,7 +107,7 @@ public class FileUtils {
 				JarEntry entry = entries.nextElement();
 				//get the last bit of the name - that means, the last slash to end of string
 				int positionOfLastSlash = entry.getName().lastIndexOf("/");
-	
+
 				String entryName = entry!= null ? entry.getName().substring(1 + positionOfLastSlash ) : "";
 				if (entryName.equals(archivedFileName) || archivedFileName.equals(entry.getName())) {
 					foundEntry = entry;
@@ -128,8 +128,8 @@ public class FileUtils {
 					output.close();
 				}
 			} else {
-				System.out.println("Could not find class " + archivedFileName + " - exiting...");
-				System.exit(0);
+				System.out.println("Could not find class " + archivedFileName + " - skipping...");
+				//				System.exit(0);
 			}
 		} catch (ZipException ze) {
 			// Sometimes, if proguard encounters a failure, we cannot get a compressed JAR archive. Proceed without and do nothing.

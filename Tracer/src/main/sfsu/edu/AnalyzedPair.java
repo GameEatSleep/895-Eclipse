@@ -7,7 +7,7 @@ package main.sfsu.edu;
  *
  */
 public class AnalyzedPair {
-	
+
 	private String fileName;
 	private String pathToFile;
 	private ObfuscationType obfuscationType;
@@ -15,6 +15,7 @@ public class AnalyzedPair {
 	private double sizeChange;
 	private int fieldsChanged;
 	private int cpoolSize;
+	private int attributesChanged;
 	private double rating;
 	String originalCallFlow;
 	String finalCallFlow;
@@ -27,9 +28,10 @@ public class AnalyzedPair {
 		this.sizeChange = obfuscatedFile.getFileSize();
 		this.fieldsChanged = obfuscatedFile.getNumFields();
 		this.cpoolSize = obfuscatedFile.getCpoolSize();
+		this.attributesChanged = obfuscatedFile.getNumAttributes();
 		this.originalCallFlow = originalFile.getCallFlow();
 		this.finalCallFlow = obfuscatedFile.getCallFlow();
-		
+
 	}
 	public String getFileName() {
 		return fileName;
@@ -73,6 +75,12 @@ public class AnalyzedPair {
 	public void setFieldsChanged(int fieldsChanged) {
 		this.fieldsChanged = fieldsChanged;
 	}
+	public int getAttributesChanged() {
+		return attributesChanged;
+	}
+	public void setAttributesChanged(int attributesChanged) {
+		this.attributesChanged = attributesChanged;
+	}
 	public double getRating() {
 		return rating;
 	}
@@ -96,7 +104,7 @@ public class AnalyzedPair {
 	}
 	@Override
 	public String toString() {
-		return obfuscationType + "\t" + fileName + "\t\t" + methodsChanged + "\t\t" + sizeChange + "\t\t" + fieldsChanged + "\t\t\t" + rating;  
+		return obfuscationType + "\t" + fileName + "\t\t" + methodsChanged + "\t\t" + sizeChange + "\t\t" + fieldsChanged + "\t\t" + attributesChanged + "\t\t\t" + rating;  
 	}
 
 

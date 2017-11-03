@@ -25,6 +25,6 @@ public class CallFlowComparison {
 	public void setObfuscatedCallFlows(List<String> obfuscatedCallFlows) {
 		this.obfuscatedCallFlows = obfuscatedCallFlows;
 	}
-	
-	
+
+
 }

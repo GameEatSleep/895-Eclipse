@@ -1,0 +1,8 @@
+<project default = "compile">
+	<target name="compile">
+		<javac includeantruntime="true" srcdir="src"/>
+	</target>
+
+	 
+
+</project>

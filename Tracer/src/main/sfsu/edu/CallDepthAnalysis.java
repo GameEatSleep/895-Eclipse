@@ -4,12 +4,12 @@ public class CallDepthAnalysis {
 
 	int callDepth;
 	String callFlow;
-	
+
 	public CallDepthAnalysis(int callDepth,String callFlow) {
 		this.callDepth = callDepth;
 		this.callFlow = callFlow;
 	}
-	
+
 	int getCallDepth() {
 		return this.callDepth;
 	}
