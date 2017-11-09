@@ -28,13 +28,17 @@
 	<dependency>
         <artifactId>jbox2d-testbed-js</artifactId>
 		<groupId>org.jbox2d</groupId>
-		<version>jshrink</version>
+		<version>1</version>
+		<scope>system</scope>
+		<systemPath>${basedir}/../snapshotj.jar</systemPath>
     </dependency>
 	<!-- Aspect to weave -->
     <dependency>
 		<groupId>main.sfsu.edu</groupId>
 		<artifactId>aspect</artifactId>
-		<version>1.0.0.1</version>
+		<version>1</version>
+		<scope>system</scope>
+		<systemPath>${basedir}/../aspect.jar</systemPath>
 	</dependency>
   </dependencies>
   <build>
