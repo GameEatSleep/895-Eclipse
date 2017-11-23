@@ -9,7 +9,7 @@
  
  - Download jShrink (http://www.e-t.com/jshrink.html) and extract jshrink.jar to the working directory
  
- - Download and isntall ApectJ Compiler (sudo apt install aspectj)
+ - Download and install ApectJ Compiler (sudo apt install aspectj)
 		
  - If you're running on a Unix machine, you also need to install openjfx (sudo apt-get install openjfx)
  
