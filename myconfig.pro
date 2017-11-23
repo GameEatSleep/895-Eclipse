@@ -1,7 +1,9 @@
--injars 'jbox2d\jbox2d-testbed\target\jbox2d-testbed-2.3.1-SNAPSHOT.jar'
+-injars 'jbox2d/jbox2d-testbed/target/jbox2d-testbed-2.3.1-SNAPSHOT.jar'
 -outjars 'snapshotp.jar'
 
--libraryjars 'C:\Program Files\Java\jdk1.8.0_144\jre\lib\rt.jar'
+-libraryjars '<java.home>/lib/rt.jar'
+-libraryjars jbox2d/jbox2d-library/target/jbox2d-library-2.3.1-SNAPSHOT.jar 
+-libraryjars jbox2d/jbox2d-serialization/target/jbox2d-serialization-2.3.1-SNAPSHOT.jar 
 
 -dontobfuscate
 -dontwarn

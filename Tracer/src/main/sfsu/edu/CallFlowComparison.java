@@ -1,7 +1,9 @@
 package main.sfsu.edu;
 
 import java.util.List;
-
+//Dynamic Analysis now done using Post-Compile Time Weaving
+@SuppressWarnings("unused")
+@Deprecated
 public class CallFlowComparison {
 
 	String originalCallFlow;

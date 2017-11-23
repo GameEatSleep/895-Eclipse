@@ -1,5 +1,7 @@
 package main.sfsu.edu;
-
+//Dynamic Analysis now done using Post-Compile Time Weaving
+@SuppressWarnings("unused")
+@Deprecated
 public class CallDepthAnalysis {
 
 	int callDepth;

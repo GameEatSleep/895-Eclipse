@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -32,6 +33,13 @@ public class ObfuscationAnalysis {
 	private Map<String,List<AnalyzedFile>> obfuscatedFiles = new HashMap<String,List<AnalyzedFile>>();
 	//Set of comparisons between each original file and the resulting obfuscations
 	private List<AnalyzedPair> allFilesUnderAnalysis = new ArrayList<AnalyzedPair>();
+	//Cumulative Stats Tracking
+	int methodsProguard = 0,methods=0,methodsJShrink=0;
+	int fieldsProguard = 0,fields=0,fieldsJShrink=0;
+	int attributesProguard = 0,attrs=0,attributesJShrink=0;
+	int cPoolProguard = 0,cpools=0,cPoolJShrink=0;
+	double sizeProguard = 0.0,size=0.0,sizeJShrink=0.0; 
+
 	public static final String JAVA_TYPE = "java";
 	public static final String CLASS_TYPE = "class";
 
@@ -143,27 +151,39 @@ public class ObfuscationAnalysis {
 		for (AnalyzedPair ap: allFilesUnderAnalysis) {
 			if (seenFiles.add(ap.getPathToFile())) {
 				AnalyzedFile originalFile = originalFiles.get(ap.getPathToFile());
+
 				System.out.format("%20s%25s%20d%20f%20d%20d%20d", "Original", originalFile.getFileName(), originalFile.getNumMethods(), originalFile.getFileSize(), originalFile.getNumFields(), originalFile.getNumAttributes(),originalFile.getCpoolSize());
+				methods=methods+originalFile.getNumMethods();
+				fields=fields+originalFile.getNumFields();
+				attrs=attrs+originalFile.getNumAttributes();
+				cpools=cpools+originalFile.getCpoolSize();
+				size=size+originalFile.getFileSize();
 				System.out.println();
 			}
 			System.out.format("%20s%25s%20d%20f%20d%20d%20d", ap.getObfuscationType(), ap.getFileName(), ap.getMethodsChanged(), ap.getSizeChange(), ap.getFieldsChanged(), ap.getAttributesChanged(),ap.getCpoolSize());
+			if(ObfuscationType.JSHRINK.equals(ap.getObfuscationType())){
+				methodsJShrink=methodsJShrink+ap.getMethodsChanged();
+				fieldsJShrink=fieldsJShrink+ap.getFieldsChanged();
+				attributesJShrink=attributesJShrink+ap.getAttributesChanged();
+				cPoolJShrink=cPoolJShrink+ap.getCpoolSize();
+				sizeJShrink=sizeJShrink+ap.getSizeChange();
+			}
+			else{
+				methodsProguard=methodsProguard+ap.getMethodsChanged();
+				fieldsProguard=fieldsProguard+ap.getFieldsChanged();
+				attributesProguard=attributesProguard+ap.getAttributesChanged();
+				cPoolProguard=cPoolProguard+ap.getCpoolSize();
+				sizeProguard=sizeProguard+ap.getSizeChange();
+			}
 			System.out.println();
 		}
 		System.out.println();
-		//		System.out.println("--- Call Flow Analysis ---");
-		//		for (Map.Entry<String, List<AnalyzedFile>> entry : obfuscatedFiles.entrySet()) {
-		//			String pathToFile = entry.getKey();
-		//			AnalyzedFile originalFile = originalFiles.get(pathToFile);
-		//			if (originalFile.getCallFlow()!=null && originalFile.getCallFlow().trim().length() > 0) { //if this is a helper class, etc, then we don't expect a call flow.
-		//				System.out.println("--- File: " + pathToFile + " ---");
-		//				System.out.println("Original Call Flow: \n" + originalFile.getCallFlow());
-		//				for (AnalyzedFile af:entry.getValue()) {
-		//					System.out.println("Obfuscation Type: " + af.getObfuscationType());
-		//					System.out.println("Obfuscated Call Flow: " + af.getCallFlow());
-		//				}
-		//			}
-		//		}
-		//clean up all the files that we created - we need to get each filename, replace .java with .class, and use fileUtils to delete em
+		System.out.format("%20s%25s%22d%18f%20d%21d%21d", "Total", "          ", methods, size, fields, attrs, cpools);
+		System.out.println();
+		System.out.format("%20s%25s%22d%18f%20d%21d%21d", "TotalJShrink", "          ", methodsJShrink, sizeJShrink, fieldsJShrink, attributesJShrink, cPoolJShrink);
+		System.out.println();
+		System.out.format("%20s%25s%22d%18f%20d%21d%21d", "TotalProguard", "          ", methodsProguard, sizeProguard, fieldsProguard, attributesProguard, cPoolProguard);
+		System.out.println();
 		cleanupFiles();
 	}
 

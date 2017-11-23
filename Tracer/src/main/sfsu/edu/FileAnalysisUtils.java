@@ -7,10 +7,18 @@ import java.io.IOException;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.JavaClass;
+/**
+ * 
+ * FileAnalysisUtils.java
+ * 
+ * A helper class to Analyze changes in files before and after obfuscation.
+ * 
+ * @author anaqvi
+ *
+ */
 
 public class FileAnalysisUtils {
 
-	//	static AnalyzedFile rateSingleFile(File file, CallDepthAnalysis cdAnalysis, ObfuscationType obfuscationType) {
 	static AnalyzedFile rateSingleFile(File file, ObfuscationType obfuscationType) {
 		@SuppressWarnings("unused")
 		int methodCount = 0, fieldCount = 0, attributeCount = 0, bytesCounter = 0, Alen = 0,cpoolCount=0;
