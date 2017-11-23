@@ -1,7 +1,7 @@
 # Tracer
 895
 
- *****************************************************PRE-REQS
+##PRE-REQS
  
  - Need to have Java, Maven and AspectJ Compiler installed
  
@@ -31,7 +31,7 @@ Dynamic Analysis:
 
 **************************************************************************************************************************************
 
- *****************************************************Changes Needed to Run on different programs
+##Changes Needed to Run on different programs
  
  Static Analysis:
 
