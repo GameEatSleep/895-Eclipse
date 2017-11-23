@@ -1,7 +1,7 @@
 # Tracer
 895
 
- *****************************************************PRE-REQS**********************************************************************
+ *****************************************************PRE-REQS
  
  - Need to have Java, Maven and AspectJ Compiler installed
  
@@ -29,3 +29,21 @@ Dynamic Analysis:
 
 - Run tool.sh
 
+**************************************************************************************************************************************
+
+ *****************************************************Changes Needed to Run on different programs
+ 
+ Static Analysis:
+
+* Place Source files in testFiles/src directory 
+
+************************************************************************************************************************************** 
+ Dynamic Analysis:
+
+* Update Pom Files in "jShrink","proguard","unobfuscated" folders with you jar dependency and Main Class
+
+* Update "tool.sh" with your jar file and classpath dependencies for jShrink obfuscation
+
+* Update "myconfig.pro" with your jar file and dependencies as libraryjars for proguard obfuscation
+
+**************************************************************************************************************************************
