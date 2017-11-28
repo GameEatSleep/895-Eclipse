@@ -1,7 +1,11 @@
  #!/bin/bash
  # 895 automation script
 
+<<<<<<< HEAD
  ajc -1.8 AspectSrc/dynamicTracer.java -outxml -outjar aspect.jar
+=======
+ ajc -1.8 AspectSrc/Azpect.java -outxml -outjar aspect.jar
+>>>>>>> 9f91d7f5e6d2aaa7410a73d24a4cfa473f65066f
  
  cd jbox2d
  

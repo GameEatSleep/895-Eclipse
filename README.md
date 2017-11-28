@@ -1,7 +1,7 @@
 # Tracer
-895
+# 895
 
- *****************************************************PRE-REQS**********************************************************************
+## PRE-REQS
  
  - Need to have Java, Maven and AspectJ Compiler installed
  
@@ -9,7 +9,7 @@
  
  - Download jShrink (http://www.e-t.com/jshrink.html) and extract jshrink.jar to the working directory
  
- - Download and isntall ApectJ Compiler (sudo apt install aspectj)
+ - Download and install ApectJ Compiler (sudo apt install aspectj)
 		
  - If you're running on a Unix machine, you also need to install openjfx (sudo apt-get install openjfx)
  
@@ -23,64 +23,30 @@ Static Analysis:
 
 * Run as Java Application 
 
-<<<<<<< HEAD
 **************************************************************************************************************************************
 
 Dynamic Analysis:
 
 - Run tool.sh
-=======
- *****************************************************PRE-REQS**********************************************************************
- 
- - Need to have Java and Maven installed
- 
- - Download proguard (https://sourceforge.net/projects/proguard/files/) and extract proguard.jar to the working directory
- 
- - Download jShrink (http://www.e-t.com/jshrink.html) and extract jshrink.jar to the working directory
- 
- - Download ApectJ and extract to the working directory
-		- set ASPECTJ_HOME='AspectJ directory'
-		- Run the command "%JAVA_HOME%\bin\java" -classpath "%ASPECTJ_HOME%\lib\aspectjtools.jar;%JAVA_HOME%\lib\tools.jar;%CLASSPATH%" -Xmx64M org.aspectj.tools.ajc.Main %1 %2 %3 %4 %5 %6 %7 %8 %9
-		- Add aspectjweaver.jar and aspectjrt.jar to the classpath
-		
- - If you're running on a Unix machine, you need to install openjfx (sudo apt-get install openjfx)
- 
- - Need to set library jar in 'myconfig.pro' pointing to Java_Home\jdk1.8.x_xxx\jre\lib\rt.jar
- 
+
 **************************************************************************************************************************************
+
+
+
+
+## Changes Needed to Run on different programs
  
+ Static Analysis:
 
-Dynamic Analysis:
+* Place Source files in testFiles/src directory 
 
-- Run the following commands in the repository directory:
+************************************************************************************************************************************** 
+ Dynamic Analysis:
 
-* cd jbox2d
+* Update Pom Files in "jShrink","proguard","unobfuscated" folders with you jar dependency and Main Class
 
-* mvn clean install
+* Update "tool.sh" with your jar file and classpath dependencies for jShrink obfuscation
 
-* cd ..
+* Update "myconfig.pro" with your jar file and dependencies as libraryjars for proguard obfuscation
 
-* ajc -1.8 Azpect.java -outxml -outjar aspect.jar
- 
- * java -jar proguard.jar '@myconfig.pro'
- 
- * java -jar jshrink.jar jbox2d\jbox2d-testbed\target\jbox2d-testbed-2.3.1-SNAPSHOT.jar -overwrite -o snapshotj.jar -keep org.? -cp jbox2d\jbox2d-library\target\classes;jbox2d\jbox2d-serialization\target\classes
- 
-* cd original
-
-* mvn clean install 
-
-* mvn exec:java
-
-* cd ../proguard
-
-* mvn clean install 
-
-* mvn exec:java
-
-* cd ../jShrink
-
-* mvn clean install 
-
-* mvn exec:java
->>>>>>> a90719e114e09a3e52a90dce609c6e985f9f9a83
+**************************************************************************************************************************************
