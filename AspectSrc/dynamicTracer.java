@@ -72,17 +72,9 @@ public class dynamicTracer{
 			//special case - if there is only one value in the header, then make returnType void
 			returnType = "void";
 			methodName = returnAndHeader[0].trim();
-		} else if (returnAndHeader.length == 2){
-			returnType = returnAndHeader[0].trim();
-			methodName = returnAndHeader[1];
-		}
-		else if (returnAndHeader.length == 3){
-			returnType = returnAndHeader[1].trim();
-			methodName = returnAndHeader[2];
-		}
-		else if (returnAndHeader.length == 4){
-			returnType = returnAndHeader[2].trim();
-			methodName = returnAndHeader[3];
+		} else if (returnAndHeader.length >= 2){
+			returnType = returnAndHeader[(returnAndHeader.length - 2)].trim();
+			methodName = returnAndHeader[(returnAndHeader.length - 1)];
 		}
 		returnType=convert(returnType);
 		if (params.startsWith("(")) {
