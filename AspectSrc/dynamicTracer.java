@@ -1,38 +1,26 @@
+import java.io.*;
+import java.util.*;
+import java.lang.Thread;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.JoinPoint.EnclosingStaticPart;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import java.io.*;
-import java.lang.Thread;
-import java.util.*;
+import org.aspectj.lang.JoinPoint.EnclosingStaticPart;
 
 @Aspect
 public class dynamicTracer{
 
-	private StringBuilder caller = new StringBuilder();
 	public BufferedWriter bw = null;
-	public boolean flag = false; // To check if we are parsing enclosingJoinPoint
 	@Pointcut("call(public * *(..)) && !within(dynamicTracer)")
 	public static void publicMethodCalls() {}
-	@Pointcut ("execution(* *.main(..))")  
-	protected void startOfMainMethod() {}
 
 	@Before("publicMethodCalls()")
-	public void myPointcut(
-			JoinPoint thisJoinPoint,
-			JoinPoint.EnclosingStaticPart ejp
-			) 
+	public void logger(	JoinPoint thisJoinPoint, JoinPoint.EnclosingStaticPart ejp ) 
 	{	
-		caller.append(ejp);	
+		String temp = ((JoinPoint.StaticPart)ejp).getSignature().toLongString();
+		String callerString = sig(temp);
 		String tId = (Long.toString(Thread.currentThread().getId()));
-		String callerString  = caller.toString();
 		String calleeString  = sig(thisJoinPoint.getSignature().toLongString());
-		flag = true;
-		callerString  = callerString.replaceAll("execution", "");
-		callerString  = callerString.replaceAll("call", "");
-		callerString  = sig(callerString);
-		flag = false;
 		try {
 			bw = new BufferedWriter(new FileWriter("log.csv",true));
 			bw.write(tId + "  " + callerString + " ," + tId + "  "  + calleeString + '\n');
@@ -44,7 +32,6 @@ public class dynamicTracer{
 			} catch (IOException ioe2) {
 			}
 		}
-		caller.setLength(0);
 	}
 
 	public String sig(String input){
@@ -62,6 +49,8 @@ public class dynamicTracer{
 		//Get the parameters (bit within brackets)
 		int positionOfParamStart = input.indexOf("(");
 		int positionOfParamEnd = input.indexOf(")");
+		if(positionOfParamStart==-1)
+			return "";
 		String firstPart = input.substring(0, positionOfParamStart);
 		String params = input.substring(positionOfParamStart);
 		// break the first part (return type + header) on spaces
@@ -119,20 +108,6 @@ public class dynamicTracer{
 		input = input.replaceAll("\\bdouble\\b", "D");
 		input = input.replaceAll("\\blong\\b", "J");
 		input = input.replaceAll("\\bobject\\b", "L");
-		if (flag) {
-			input = input.replaceAll("\\bString\\b", "Ljava/lang/String");	
-			input = input.replaceAll("\\bStringBuilder\\b", "Ljava/lang/StringBuilder");	
-			input = input.replaceAll("\\bStringBuffer\\b", "Ljava/lang/StringBuffer");
-			input = input.replaceAll("\\bBoolean\\b", "Ljava/lang/Boolean");
-			input = input.replaceAll("\\bFloat\\b", "Ljava/lang/Float");
-			input = input.replaceAll("\\bInteger\\b", "Ljava/lang/Integer");
-			input = input.replaceAll("\\bCharacter\\b", "Ljava/lang/Character");
-			input = input.replaceAll("\\bArrayList\\b","java/util/ArrayList");
-			input = input.replaceAll("\\bHashSet\\b","java/util/HashSet");
-			input = input.replaceAll("\\bHashMap\\b","java/util/HashMap");
-			input = input.replaceAll("\\bObject\\b","java/lang/Object");
-			input = input.replaceAll("\\bClass\\b","java/lang/Class");
-		}
 		if (isArray) {
 			input = "[" + input;
 		}
@@ -143,6 +118,5 @@ public class dynamicTracer{
 			input = input + ";";
 		}
 		return input;
-
 	}
 }
