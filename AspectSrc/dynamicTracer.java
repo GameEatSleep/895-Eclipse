@@ -17,8 +17,7 @@ public class dynamicTracer{
 	@Before("publicMethodCalls()")
 	public void logger(	JoinPoint thisJoinPoint, JoinPoint.EnclosingStaticPart ejp ) 
 	{	
-		String temp = ((JoinPoint.StaticPart)ejp).getSignature().toLongString();
-		String callerString = sig(temp);
+		String callerString = sig(((JoinPoint.StaticPart)ejp).getSignature().toLongString());
 		String tId = (Long.toString(Thread.currentThread().getId()));
 		String calleeString  = sig(thisJoinPoint.getSignature().toLongString());
 		try {
