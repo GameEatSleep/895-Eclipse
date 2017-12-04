@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -145,14 +144,14 @@ public class ObfuscationAnalysis {
 	 */
 	private void printResults() {
 		System.out.println("---File Analysis---");
-		System.out.format("%20s%25s%22s%18s%20s%25s%25s", "Obfuscator", "File Name", "Methods ", "Size", "Fields", "Attributes", "Constant Pool");
+		System.out.format("%20s%30s%22s%18s%20s%25s%25s", "Obfuscator", "File Name", "Methods ", "Size", "Fields", "Attributes", "Constant Pool");
 		System.out.println();
 		Set<String> seenFiles = new HashSet<String>();
 		for (AnalyzedPair ap: allFilesUnderAnalysis) {
 			if (seenFiles.add(ap.getPathToFile())) {
 				AnalyzedFile originalFile = originalFiles.get(ap.getPathToFile());
 
-				System.out.format("%20s%25s%20d%20f%20d%20d%20d", "Original", originalFile.getFileName(), originalFile.getNumMethods(), originalFile.getFileSize(), originalFile.getNumFields(), originalFile.getNumAttributes(),originalFile.getCpoolSize());
+				System.out.format("%20s%30s%20d%20f%20d%20d%20d", "Original", originalFile.getFileName(), originalFile.getNumMethods(), originalFile.getFileSize(), originalFile.getNumFields(), originalFile.getNumAttributes(),originalFile.getCpoolSize());
 				methods=methods+originalFile.getNumMethods();
 				fields=fields+originalFile.getNumFields();
 				attrs=attrs+originalFile.getNumAttributes();
@@ -160,7 +159,7 @@ public class ObfuscationAnalysis {
 				size=size+originalFile.getFileSize();
 				System.out.println();
 			}
-			System.out.format("%20s%25s%20d%20f%20d%20d%20d", ap.getObfuscationType(), ap.getFileName(), ap.getMethodsChanged(), ap.getSizeChange(), ap.getFieldsChanged(), ap.getAttributesChanged(),ap.getCpoolSize());
+			System.out.format("%20s%30s%20d%20f%20d%20d%20d", ap.getObfuscationType(), ap.getFileName(), ap.getMethodsChanged(), ap.getSizeChange(), ap.getFieldsChanged(), ap.getAttributesChanged(),ap.getCpoolSize());
 			if(ObfuscationType.JSHRINK.equals(ap.getObfuscationType())){
 				methodsJShrink=methodsJShrink+ap.getMethodsChanged();
 				fieldsJShrink=fieldsJShrink+ap.getFieldsChanged();
@@ -178,11 +177,11 @@ public class ObfuscationAnalysis {
 			System.out.println();
 		}
 		System.out.println();
-		System.out.format("%20s%25s%22d%18f%20d%21d%21d", "Total", "          ", methods, size, fields, attrs, cpools);
+		System.out.format("%20s%30s%22d%18f%20d%21d%21d", "Total", "          ", methods, size, fields, attrs, cpools);
 		System.out.println();
-		System.out.format("%20s%25s%22d%18f%20d%21d%21d", "TotalJShrink", "          ", methodsJShrink, sizeJShrink, fieldsJShrink, attributesJShrink, cPoolJShrink);
+		System.out.format("%20s%30s%22d%18f%20d%21d%21d", "TotalJShrink", "          ", methodsJShrink, sizeJShrink, fieldsJShrink, attributesJShrink, cPoolJShrink);
 		System.out.println();
-		System.out.format("%20s%25s%22d%18f%20d%21d%21d", "TotalProguard", "          ", methodsProguard, sizeProguard, fieldsProguard, attributesProguard, cPoolProguard);
+		System.out.format("%20s%30s%22d%18f%20d%21d%21d", "TotalProguard", "          ", methodsProguard, sizeProguard, fieldsProguard, attributesProguard, cPoolProguard);
 		System.out.println();
 		cleanupFiles();
 	}
