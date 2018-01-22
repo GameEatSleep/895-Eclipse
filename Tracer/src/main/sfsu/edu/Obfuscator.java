@@ -27,16 +27,32 @@ public class Obfuscator {
 	 */
 	static File createObfuscatedClassFileUsingJshrink(File originalClassFile) {
 		String unobfuscatedFileName = FileUtils.getFileNameWithoutExtension(originalClassFile);
+		String obfuscatedFileName = unobfuscatedFileName+".jar";
 		String pathToFiles = originalClassFile.getParent()+File.separator;
 		String finalObfuscatedFileName = pathToFiles+unobfuscatedFileName + ".class";
 		unobfuscatedFileName = unobfuscatedFileName+".class";
 
+		ArrayList<String> paramsExecute = new ArrayList<String>();
+		String jshrinkJarFilePath = System.getProperty("user.dir")+File.separator+"target"+File.separator+"alternateLocation"+File.separator+"jshrink-1.0.0.jar";
+//		paramsExecute.add("java");
+//		paramsExecute.add("-jar");
+//		paramsExecute.add(jshrinkJarFilePath);
+//		paramsExecute.add(pathToFiles+unobfuscatedFileName);
+//		paramsExecute.add("-overwrite");
+//		paramsExecute.add("-o");
+//		paramsExecute.add(pathToFiles+obfuscatedFileName);
+
 		String pathToJar = System.getProperty("user.dir")+File.separator+".."+File.separator+"snapshotj.jar";
 		try {
-			//next, extract the .class from the new .jar file
+//			ProcessBuilder builderExecute = new ProcessBuilder(paramsExecute);
+//			Process process = builderExecute.start();
+//			process.waitFor();
+//			//next, extract the .class from the new .jar file
 			FileUtils.extractFromJar(pathToJar, unobfuscatedFileName, finalObfuscatedFileName);
 
-			} catch (IOException e) {
+			//Finally, remove the .jar file we created
+			//FileUtils.delete(new File(pathToJar));
+		} catch (IOException e) {
 			e.printStackTrace();
 		} 
 		return new File(finalObfuscatedFileName);
@@ -60,7 +76,7 @@ public class Obfuscator {
 		String finalObfuscatedFileName = pathToFiles+unobfuscatedFileName + ".class";
 		unobfuscatedFileName = unobfuscatedFileName+".class";
 		ArrayList<String> paramsExecute = new ArrayList<String>();
-		String proguardJarFilePath = System.getProperty("user.dir")+File.separator+"proguard.jar";
+		String proguardJarFilePath = System.getProperty("user.dir")+File.separator+"target"+File.separator+"alternateLocation"+File.separator+"proguard-base-5.3.3.jar";
 		File tempFile = new File (System.getProperty("user.dir")+File.separator+".."+File.separator+ "testFiles" + File.separator+"src");
 		String input = tempFile.getCanonicalPath(); //since we want to remove any relative pathing (eg ".." characters)
 		/*
@@ -76,7 +92,13 @@ public class Obfuscator {
 		paramsExecute.add("java");
 		paramsExecute.add("-jar");
 		paramsExecute.add(proguardJarFilePath);
-		paramsExecute.add("@myconfig.pro");
+		paramsExecute.add("-injars");
+		paramsExecute.add(input);
+		paramsExecute.add("-outjars");
+		paramsExecute.add(pathToFiles+obfuscatedFileName);
+		paramsExecute.add("-dontwarn");
+		paramsExecute.add("-keep public class **" + originalFileName);
+		paramsExecute.add("-keepclasseswithmembers class **" + originalFileName+"{ public static void main(java.lang.String[]); }");
 		String pathToJar = pathToFiles+obfuscatedFileName;
 		try {
 			ProcessBuilder builderExecute = new ProcessBuilder(paramsExecute);

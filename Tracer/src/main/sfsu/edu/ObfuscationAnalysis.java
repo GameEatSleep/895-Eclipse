@@ -1,6 +1,8 @@
 package main.sfsu.edu;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -138,29 +141,42 @@ public class ObfuscationAnalysis {
 			}
 		}
 	}
-
+	public BufferedWriter bw=null;
 	/**
 	 * Outputs the results of our analysis.
 	 */
 	private void printResults() {
-		System.out.println("---File Analysis---");
-		System.out.format("%20s%30s%22s%18s%20s%25s%25s", "Obfuscator", "File Name", "Methods ", "Size", "Fields", "Attributes", "Constant Pool");
-		System.out.println();
+		try {
+			bw = new BufferedWriter(new FileWriter(".."+ File.separator +"staticLog.txt",true));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("---Analayzing Files and Logging---");
 		Set<String> seenFiles = new HashSet<String>();
 		for (AnalyzedPair ap: allFilesUnderAnalysis) {
 			if (seenFiles.add(ap.getPathToFile())) {
 				AnalyzedFile originalFile = originalFiles.get(ap.getPathToFile());
-
-				System.out.format("%20s%30s%20d%20f%20d%20d%20d", "Original", originalFile.getFileName(), originalFile.getNumMethods(), originalFile.getFileSize(), originalFile.getNumFields(), originalFile.getNumAttributes(),originalFile.getCpoolSize());
-				methods=methods+originalFile.getNumMethods();
+				try {
+					bw.write(String.format("%20s", " Obfuscator")	+String.format("%25s", " File Name")+String.format("%22s", "Methods")+ String.format("%18s", " Size")+String.format("%20s", " Fields")+String.format("%25s", " Attributes")+String.format("%25s", " Constant Pool") + '\n');
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+				try{
+					bw.write(String.format("%20s", " Unobfuscated")	+String.format("%25s", originalFile.getFileName())+String.format("%22s", originalFile.getNumMethods())+ String.format("%18s",  originalFile.getFileSize())+String.format("%20s", originalFile.getNumFields())+String.format("%25s", originalFile.getNumAttributes())+String.format("%25s", originalFile.getCpoolSize()) + '\n');
+				}catch (IOException ioe) {
+					ioe.printStackTrace();
+				}methods=methods+originalFile.getNumMethods();
 				fields=fields+originalFile.getNumFields();
 				attrs=attrs+originalFile.getNumAttributes();
 				cpools=cpools+originalFile.getCpoolSize();
 				size=size+originalFile.getFileSize();
-				System.out.println();
-			}
-			System.out.format("%20s%30s%20d%20f%20d%20d%20d", ap.getObfuscationType(), ap.getFileName(), ap.getMethodsChanged(), ap.getSizeChange(), ap.getFieldsChanged(), ap.getAttributesChanged(),ap.getCpoolSize());
-			if(ObfuscationType.JSHRINK.equals(ap.getObfuscationType())){
+				}
+			try {
+				bw.write(String.format("%20s", ap.getObfuscationType())	+String.format("%25s", ap.getFileName())+String.format("%22s", ap.getMethodsChanged())+ String.format("%18s", ap.getSizeChange())+String.format("%20s", ap.getFieldsChanged())+String.format("%25s", ap.getAttributesChanged())+String.format("%25s", ap.getCpoolSize()) + '\n');
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}if(ObfuscationType.JSHRINK.equals(ap.getObfuscationType())){
 				methodsJShrink=methodsJShrink+ap.getMethodsChanged();
 				fieldsJShrink=fieldsJShrink+ap.getFieldsChanged();
 				attributesJShrink=attributesJShrink+ap.getAttributesChanged();
@@ -174,15 +190,34 @@ public class ObfuscationAnalysis {
 				cPoolProguard=cPoolProguard+ap.getCpoolSize();
 				sizeProguard=sizeProguard+ap.getSizeChange();
 			}
-			System.out.println();
 		}
-		System.out.println();
-		System.out.format("%20s%30s%22d%18f%20d%21d%21d", "Total", "          ", methods, size, fields, attrs, cpools);
-		System.out.println();
-		System.out.format("%20s%30s%22d%18f%20d%21d%21d", "TotalJShrink", "          ", methodsJShrink, sizeJShrink, fieldsJShrink, attributesJShrink, cPoolJShrink);
-		System.out.println();
-		System.out.format("%20s%30s%22d%18f%20d%21d%21d", "TotalProguard", "          ", methodsProguard, sizeProguard, fieldsProguard, attributesProguard, cPoolProguard);
-		System.out.println();
+		try {
+			bw.write('\n' + String.format("%20s", " ")	+String.format("%25s", " Methods")+String.format("%16s", "Size")+ String.format("%22s", " Fields")+String.format("%25s", " Attributes")+String.format("%27s", " Constant Pool")+ '\n');
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		try {
+			bw.write(String.format("%20s", "Total          ")	+String.format("%22s", methods)+ String.format("%20s", size)+String.format("%20s", fields)+String.format("%25s", attrs)+String.format("%25s", cpools) + '\n');
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		try {
+			bw.write(String.format("%20s", "TotalJShrink          ")	+String.format("%20s", methodsJShrink)+ String.format("%20s", sizeJShrink)+String.format("%20s", fieldsJShrink)+String.format("%25s", attributesJShrink)+String.format("%25s", cPoolJShrink) + '\n');
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		try {
+			bw.write(String.format("%20s", "TotalProguard          ")	+String.format("%19s", methodsProguard)+ String.format("%20s", sizeProguard)+String.format("%20s", fieldsProguard)+String.format("%25s", attributesProguard)+String.format("%25s", cPoolProguard) + '\n');
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		try{
+			if(bw!=null)
+				bw.close();
+		}
+		catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
 		cleanupFiles();
 	}
 

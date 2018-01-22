@@ -51,11 +51,6 @@
 			<artifactId>bcel</artifactId>
 			<version>6.0</version>
 		</dependency>
-		<dependency>
-			<groupId>main.sfsu.edu</groupId>
-			<artifactId>jshrink</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
