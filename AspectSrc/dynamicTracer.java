@@ -1,121 +1,92 @@
 import java.io.*;
 import java.util.*;
 import java.lang.Thread;
+import java.lang.reflect.Method;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.aspectj.lang.JoinPoint.EnclosingStaticPart;
 
 @Aspect
 public class dynamicTracer{
 
-	public BufferedWriter bw = null;
-	@Pointcut("call(public * *(..)) && !within(dynamicTracer)")
-	public static void publicMethodCalls() {}
+	private static final Map<Object, String> JNI_TYPE = new HashMap<>();
+	static
+	{
+		JNI_TYPE.put(int.class, "I");
+		JNI_TYPE.put(long.class, "J");
+		JNI_TYPE.put(short.class, "S");
+		JNI_TYPE.put(double.class, "D");
+		JNI_TYPE.put(float.class, "F");
+		JNI_TYPE.put(boolean.class, "Z");
+		JNI_TYPE.put(byte.class, "B");
+		JNI_TYPE.put(char.class, "C");
+		JNI_TYPE.put(void.class, "V");
+	}
 
-	@Before("publicMethodCalls()")
+	public BufferedWriter bw = null;
+
+	//Pointcut for Method Calls Excluding this class(dynamicTracer)
+	//to avoid infinite loop.
+	@Pointcut("call(* *(..)) && !within(dynamicTracer)")
+	public static void MethodCalls() {}
+
+	@Before("MethodCalls()")
 	public void logger(	JoinPoint thisJoinPoint, JoinPoint.EnclosingStaticPart ejp ) 
 	{	
-		String callerString = sig(((JoinPoint.StaticPart)ejp).getSignature().toLongString());
-		String tId = (Long.toString(Thread.currentThread().getId()));
-		String calleeString  = sig(thisJoinPoint.getSignature().toLongString());
-		try {
-			bw = new BufferedWriter(new FileWriter("log.csv",true));
-			bw.write(tId + "  " + callerString + " ," + tId + "  "  + calleeString + '\n');
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}finally {                      
-			if (bw != null) try {
-				bw.close();
-			} catch (IOException ioe2) {
+		if(((JoinPoint.StaticPart)ejp).getSignature() instanceof MethodSignature){
+			MethodSignature calleeSignature = (MethodSignature) thisJoinPoint.getSignature();
+			Method calleeMethod = calleeSignature.getMethod();
+			MethodSignature callerSignature = null;
+			callerSignature = (MethodSignature) ((JoinPoint.StaticPart)ejp).getSignature();
+			Method callerMethod = callerSignature.getMethod();
+			String callerString = getJNITypeSig(callerMethod);
+			String tId = (Long.toString(Thread.currentThread().getId()));
+			String calleeString  = getJNITypeSig(calleeMethod);
+			try {
+				bw = new BufferedWriter(new FileWriter("log.csv",true));
+				bw.write(tId + "  " + callerString + "  " + callerMethod.getName() + " ," + tId + "  "  + calleeString + "  " + calleeMethod.getName() + '\n');
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}finally {                      
+				if (bw != null) try {
+					bw.close();
+				} catch (IOException ioe2) {
+				}
 			}
 		}
 	}
 
-	public String sig(String input){
-
-		StringBuilder paramString = new StringBuilder();
-		if (input == null || input.length() ==0) {
-			return null;
+	//Builds JNI signature for a method
+	public static final String getJNITypeSig(Method m)
+	{
+		final StringBuilder sb = new StringBuilder("(");
+		for(final Class<?> C : m.getParameterTypes())
+		{
+			sb.append(convJNIClassType(C));
 		}
-		if (input.startsWith("(")) {
-			input = input.substring(1);
-		}
-		if (input.endsWith(")")) {
-			input = input.substring(0,input.length() - 1);
-		}
-		//Get the parameters (bit within brackets)
-		int positionOfParamStart = input.indexOf("(");
-		int positionOfParamEnd = input.indexOf(")");
-		if(positionOfParamStart==-1)
-			return "";
-		String firstPart = input.substring(0, positionOfParamStart);
-		String params = input.substring(positionOfParamStart);
-		// break the first part (return type + header) on spaces
-		String[] returnAndHeader = firstPart.split(" ");
-		String returnType="";
-		String methodName="";
-		if (returnAndHeader.length == 1) {
-			//special case - if there is only one value in the header, then make returnType void
-			returnType = "void";
-			methodName = returnAndHeader[0].trim();
-		} else if (returnAndHeader.length >= 2){
-			returnType = returnAndHeader[(returnAndHeader.length - 2)].trim();
-			methodName = returnAndHeader[(returnAndHeader.length - 1)];
-		}
-		returnType=convert(returnType);
-		if (params.startsWith("(")) {
-			params = params.substring(1);
-		}
-		if (params.endsWith(")")) {
-			params = params.substring(0,params.length() - 1);
-		}
-		//now split the params into another array, on space+comma
-		String[] splitParams = params.split(",");
-		for (String parameters:splitParams) {
-			parameters=parameters.trim();
-			parameters=convert(parameters);
-			paramString.append(parameters);
-		}
-		String parameterString = paramString.toString();
-		parameterString = methodName + ("(") + parameterString + (")") + returnType; 
-		return parameterString;
+		sb.append(')').append(convJNIClassType(m.getReturnType()));
+		return sb.toString();
 	}
 
-	public String convert(String input){
-
-		boolean isArray = false;//is it an arrray (contains [])?
-		boolean isClas = false;//is it a Class (contains /)?
-		if (input.contains("[]")) {
-			isArray= true;
-			//remove those characters so we can continue without confusion
-			input = input.replace("[]", "");
+	//Convert Class Types to JNI Format
+	static String convJNIClassType(Class<?> c)
+	{
+		if(c.isArray())
+		{
+			final Class<?> compType = c.getComponentType();
+			return '[' + convJNIClassType(compType);
 		}
-		if (input.contains("/")) { //i.e. callerString fully qualified class
-			isClas= true;
-			input = input.replace("/", "");
+		else if(c.isPrimitive())
+		{
+			return JNI_TYPE.get(c);
 		}
-		input=input.replaceAll("\\.","/");
-		input = input.replaceAll("\\bint\\b", "I");
-		input = input.replaceAll("\\bfloat\\b", "F");
-		input = input.replaceAll("\\bboolean\\b", "Z");
-		input = input.replaceAll("\\bvoid\\b", "V");
-		input = input.replaceAll("\\bchar\\b", "C");
-		input = input.replaceAll("\\bshort\\b", "S");
-		input = input.replaceAll("\\bbyte\\b", "B");
-		input = input.replaceAll("\\bdouble\\b", "D");
-		input = input.replaceAll("\\blong\\b", "J");
-		input = input.replaceAll("\\bobject\\b", "L");
-		if (isArray) {
-			input = "[" + input;
-		}
-		if (isClas) {
-			input = input + ";";
-		}
-		if (input.contains("/")) { //i.e. callerString fully qualified class
-			input = input + ";";
-		}
-		return input;
+		else
+		{
+			return 'L' + c.getName().replace('.', '/') + ';';
+		}        
 	}
 }
